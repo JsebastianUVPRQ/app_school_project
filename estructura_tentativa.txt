@@ -1,55 +1,30 @@
-project-root/
-│
-├── backend/
-│   ├── app/
-│   │   ├── __init__.py
-│   │   ├── api/
-│   │   │   ├── __init__.py
-│   │   │   ├── routes/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── some_route.py
-│   │   │   │   ├── another_route.py
-│   │   │   ├── models/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── some_model.py
-│   │   ├── core/
-│   │   │   ├── __init__.py
-│   │   │   ├── config.py
-│   │   │   ├── database.py
-│   │   ├── main.py
-│   │   ├── dependencies.py
-│   ├── tests/
-│   │   ├── __init__.py
-│   │   ├── test_some_route.py
-│   │   ├── test_another_route.py
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   ├── .env
-│   ├── .gitignore
-├── frontend/
-│   ├── public/
-│   │   ├── index.html
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── App.vue
-│   │   │   ├── SomeComponent.vue
-│   │   ├── views/
-│   │   │   ├── Home.vue
-│   │   ├── main.js
-│   ├── package.json
-│   ├── Dockerfile
-│   ├── .gitignore
-├── db/
-│   ├── migrations/
-│   │   ├── alembic.ini
-│   │   ├── versions/
-│   │   │   ├── 001_initial.py
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── some_db_model.py
-│   ├── alembic.env
-│   ├── alembic.ini
-│   ├── docker-entrypoint.sh
-├── docker-compose.yml
-├── .gitignore
-├── README.md
+/mywebapp
+|-- /models
+|   |-- estudiante.py
+|   |-- salon.py
+|   |-- materia.py
+|-- /factories
+|   |-- salon_factory.py
+|   |-- materia_factory.py
+|   |-- estudiante_factory.py
+|-- /renderer
+|   |-- renderer.py
+|-- /static
+|   |-- /js
+|       |-- main.js
+|-- /controllers
+|   |-- api.py
+|-- /views
+|   |-- /estudiante
+|       |-- index.html
+|   |-- /salon
+|       |-- index.html
+|   |-- /materia
+|       |-- index.html
+|-- /repositories
+|   |-- estudiante_repository.py
+|   |-- salon_repository.py
+|   |-- materia_repository.py
+|-- db.sqlite
+|-- web2py.py
+|-- routes.py
