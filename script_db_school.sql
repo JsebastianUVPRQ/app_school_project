@@ -49,15 +49,12 @@ CREATE TABLE `notas`
 (
  `id_notas`     integer NOT NULL ,
  `calificacion` double NOT NULL ,
- `id_estud`     integer NOT NULL ,
- `id_materia`   integer NOT NULL ,
+ `id_transaccion` integer NOT NULL
 
 PRIMARY KEY (`id_notas`),
-KEY `FK_1` (`id_estud`),
-CONSTRAINT `FK_5` FOREIGN KEY `FK_1` (`id_estud`) REFERENCES `estudiantes` (`id_estud`),
-KEY `FK_2` (`id_materia`),
-CONSTRAINT `FK_6` FOREIGN KEY `FK_2` (`id_materia`) REFERENCES `materias` (`id_materia`)
-);
+KEY `FK_1` (`id_transaccion`),
+CONSTRAINT `notas_ibfk_1` FOREIGN KEY (`id_transaccion`) REFERENCES `estudiantes_x_curso` (`id_transaccion`)
+
 
 -- ************************************** `salon`
 
@@ -68,3 +65,164 @@ CREATE TABLE `salon`
 
 PRIMARY KEY (`id_salon`)
 );
+-- ###############################
+INSERT INTO salon (id_salon, nombre_salon) VALUES
+(91, 'Noveno 1'),
+(92, 'Noveno 2'),
+(101, 'Decimo 1'),
+(102, 'Decimo 2'),
+(111, 'Once 1'),
+(112, 'Once 2');
+-- #######
+INSERT INTO estudiantes (id_estud, nombre_estud, fecha_nacimiento, id_salon) VALUES
+-- Salón 91
+(1, 'Juan Pérez', '2005-03-15', 91),
+(2, 'María López', '2004-07-20', 91),
+(3, 'Pedro Martínez', '2006-02-10', 91),
+(4, 'Ana García', '2005-09-25', 91),
+(5, 'Luisa Rodríguez', '2006-11-12', 91),
+
+-- Salón 92
+(6, 'Miguel González', '2005-08-18', 92),
+(7, 'Sofía Hernández', '2004-12-30', 92),
+(8, 'Diego Sánchez', '2006-04-05', 92),
+(9, 'Valentina Martínez', '2005-10-08', 92),
+(10, 'Daniel López', '2006-07-03', 92),
+
+-- Salón 101
+(11, 'Alejandro Ramírez', '2005-01-20', 101),
+(12, 'Fernanda Díaz', '2004-05-14', 101),
+(13, 'Roberto Pérez', '2006-09-02', 101),
+(14, 'Catalina Gómez', '2005-12-09', 101),
+(15, 'Javier Rodríguez', '2006-03-28', 101),
+
+-- Salón 102
+(16, 'Marcela Martínez', '2005-07-22', 102),
+(17, 'Andrés Sánchez', '2004-10-17', 102),
+(18, 'Camila López', '2006-06-08', 102),
+(19, 'Esteban González', '2005-11-05', 102),
+(20, 'Laura Hernández', '2006-02-14', 102),
+
+-- Salón 111
+(21, 'Santiago Ramírez', '2005-04-08', 111),
+(22, 'Ana María Díaz', '2004-08-03', 111),
+(23, 'Carlos Martínez', '2006-01-12', 111),
+(24, 'Daniela Gómez', '2005-10-27', 111),
+(25, 'Juan Pablo Rodríguez', '2006-05-18', 111),
+
+-- Salón 112
+(26, 'Valeria Sánchez', '2005-09-09', 112),
+(27, 'Mateo López', '2004-12-20', 112),
+(28, 'Paula González', '2006-03-17', 112),
+(29, 'José Hernández', '2005-08-01', 112),
+(30, 'Natalia Ramírez', '2006-07-30', 112);
+
+-- ############# MATERIAS INSERTAR ##################
+INSERT INTO materias (id_materia, nombre_materia_1, id_salon) VALUES
+-- Noveno grado
+(1, 'Trigonometría', 91),
+(2, 'Ciencias Naturales', 91),
+(3, 'Lengua y Literatura', 91),
+
+-- Décimo grado
+(4, 'Física', 101),
+(5, 'Química', 101),
+(6, 'Historia', 101),
+
+-- Onceavo grado
+(7, 'Biología', 111),
+(8, 'Geografía', 111),
+(9, 'Filosofía', 111);
+-- ########################################
+INSERT INTO estudiantes_x_curso (id_transaccion, id_estud, id_materia) VALUES
+INSERT INTO estudiantes_x_curso (id_transaccion, id_estud, id_materia) VALUES
+(1, 1, 1),
+(2, 1, 2),
+(3, 1, 3),
+(4, 2, 1),
+(5, 2, 2),
+(6, 2, 3),
+(7, 3, 1),
+(8, 3, 2),
+(9, 3, 3),
+(10, 4, 1),
+(11, 4, 2),
+(12, 4, 3),
+(13, 5, 1),
+(14, 5, 2),
+(15, 5, 3),
+(16, 6, 4),
+(17, 6, 5),
+(18, 6, 6),
+(19, 7, 4),
+(20, 7, 5),
+(21, 7, 6),
+(22, 8, 4),
+(23, 8, 5),
+(24, 8, 6),
+(25, 9, 4),
+(26, 9, 5),
+(27, 9, 6),
+(28, 10, 4),
+(29, 10, 5),
+(30, 10, 6),
+(31, 11, 7),
+(32, 11, 8),
+(33, 11, 9),
+(34, 12, 7),
+(35, 12, 8),
+(36, 12, 9),
+(37, 13, 7),
+(38, 13, 8),
+(39, 13, 9),
+(40, 14, 7),
+(41, 14, 8),
+(42, 14, 9),
+(43, 15, 7),
+(44, 15, 8),
+(45, 15, 9),
+(46, 16, 10),
+(47, 16, 11),
+(48, 16, 12),
+(49, 17, 10),
+(50, 17, 11),
+(51, 17, 12),
+(52, 18, 10),
+(53, 18, 11),
+(54, 18, 12),
+(55, 19, 10),
+(56, 19, 11),
+(57, 19, 12),
+(58, 20, 10),
+(59, 20, 11),
+(60, 20, 12),
+(61, 21, 13),
+(62, 21, 14),
+(63, 21, 15),
+(64, 22, 13),
+(65, 22, 14),
+(66, 22, 15),
+(67, 23, 13),
+(68, 23, 14),
+(69, 23, 15),
+(70, 24, 13),
+(71, 24, 14),
+(72, 24, 15),
+(73, 25, 13),
+(74, 25, 14),
+(75, 25, 15),
+(76, 26, 16),
+(77, 26, 17),
+(78, 26, 18),
+(79, 27, 16),
+(80, 27, 17),
+(81, 27, 18),
+(82, 28, 16),
+(83, 28, 17),
+(84, 28, 18),
+(85, 29, 16),
+(86, 29, 17),
+(87, 29, 18),
+(88, 30, 16),
+(89, 30, 17),
+(90, 30, 18);
