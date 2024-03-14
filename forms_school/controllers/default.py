@@ -48,6 +48,24 @@ def user():
     """
     return dict(form=auth())
 
+# ------------ Mostrar Formulario --------------------------
+def mostrar_formulario():
+    formulario = FORM(
+        'Tu nombre:',
+        INPUT(_name='nombre', requires=IS_NOT_EMPTY()),
+        'Número de salón:',
+        INPUT(_name='salon', requires=IS_IN_SET(['91', '92', '101', '102', '111', '112']), _type='text'),  # Validar el campo 'salon'
+        INPUT(_type='submit')
+    )
+    if formulario.accepts(request, session):
+        response.flash = 'formulario aceptado'
+    elif formulario.errors:
+        response.flash = 'el formulario tiene errores'
+    else:
+        response.flash = 'por favor complete el formulario'
+    return dict(formulario=formulario)
+
+
 # ---- action to server uploaded static content (required) ---
 @cache.action()
 def download():
