@@ -30,7 +30,7 @@ if not request.env.web2py_runtime_gae:
     # ---------------------------------------------------------------------
     # if NOT running on Google App Engine use SQLite or other DB
     # ---------------------------------------------------------------------
-    db = db = DAL('mysql://root:ZM$MUPu5QcrxvAU\L7@localhost:3306/escuela_base_datos', pool_size=10, migrate=True, check_reserved=['all'])
+    db
 
 else:
     # ---------------------------------------------------------------------
