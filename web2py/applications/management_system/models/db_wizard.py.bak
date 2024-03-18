@@ -1,6 +1,5 @@
 ### we prepend t_ to tablenames and f_ to fieldnames for disambiguity
-from web2py.applications.a.models import db
-from web2py.gluon.tools import Field
+
 
 ########################################
 db.define_table('t_salones',
@@ -8,9 +7,9 @@ db.define_table('t_salones',
           label=T('Nombre Salon')),
     auth.signature,
     format='%(f_nombre_salon)s',
-    migrate=False)
+    migrate=settings.migrate)
 
-db.define_table('t_salones_archive',db.t_salones,Field('current_record','reference t_salones',readable=True,writable=True))
+db.define_table('t_salones_archive',db.t_salones,Field('current_record','reference t_salones',readable=False,writable=False))
 
 ########################################
 db.define_table('t_estudiantes',
@@ -22,9 +21,9 @@ db.define_table('t_estudiantes',
           label=T('Codigo')),
     auth.signature,
     format='%(f_name)s',
-    migrate=False)
+    migrate=settings.migrate)
 
-db.define_table('t_estudiantes_archive',db.t_estudiantes,Field('current_record','reference t_estudiantes',readable=True,writable=True))
+db.define_table('t_estudiantes_archive',db.t_estudiantes,Field('current_record','reference t_estudiantes',readable=False,writable=False))
 
 ########################################
 db.define_table('t_materias',
@@ -34,9 +33,9 @@ db.define_table('t_materias',
           label=T('Codigo')),
     auth.signature,
     format='%(f_nombre_materia)s',
-    migrate=False)
+    migrate=settings.migrate)
 
-db.define_table('t_materias_archive',db.t_materias,Field('current_record','reference t_materias',readable=True,writable=True))
+db.define_table('t_materias_archive',db.t_materias,Field('current_record','reference t_materias',readable=False,writable=False))
 
 ########################################
 db.define_table('t_notas',
@@ -48,7 +47,6 @@ db.define_table('t_notas',
           label=T('Codigo')),
     auth.signature,
     format='%(f_calificacion)s',
-    migrate=False)
+    migrate=settings.migrate)
 
-db.define_table('t_notas_archive',db.t_notas,Field('current_record','reference t_notas',readable=True,writable=True))
-
+db.define_table('t_notas_archive',db.t_notas,Field('current_record','reference t_notas',readable=False,writable=False))

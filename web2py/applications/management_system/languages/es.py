@@ -83,6 +83,7 @@
 'Copyright': 'Copyright',
 'CSV': 'CSV',
 'CSV (hidden cols)': 'CSV (hidden cols)',
+'Current Record': 'Current Record',
 'Current request': 'Solicitud en curso',
 'Current response': 'Respuesta en curso',
 'Current session': 'Sesión en curso',
