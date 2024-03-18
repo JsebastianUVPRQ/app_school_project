@@ -166,3 +166,29 @@ CREATE TABLE "t_materias_archive_archive"(
     "modified_by" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  
 );
 success!
+timestamp: 2024-03-18T15:59:47.561507
+CREATE TABLE "t_estudiantes_archive_archive"(
+    "current_record" INTEGER REFERENCES "t_estudiantes_archive" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "f_name" CHAR(512),
+    "f_birthday" DATE,
+    "f_codigo" INTEGER REFERENCES "t_salones" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "is_active" CHAR(1),
+    "created_on" TIMESTAMP,
+    "created_by" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "modified_on" TIMESTAMP,
+    "modified_by" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  
+);
+success!
+timestamp: 2024-03-18T16:00:31.618596
+CREATE TABLE "t_salones_archive_archive"(
+    "current_record" INTEGER REFERENCES "t_salones_archive" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "f_nombre_salon" CHAR(512),
+    "is_active" CHAR(1),
+    "created_on" TIMESTAMP,
+    "created_by" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "modified_on" TIMESTAMP,
+    "modified_by" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  
+);
+success!
