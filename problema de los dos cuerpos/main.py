@@ -4,6 +4,9 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.animation import FuncAnimation
 from scipy.integrate import odeint
+# =============================================
+from matplotlib.animation import PillowWriter
+
 
 # =============================================
 # Clase para simular órbitas
@@ -129,3 +132,8 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = OrbitalApp(root)
     root.mainloop()
+
+# Agregar en la clase:
+def save_gif(self):
+    writer = PillowWriter(fps=30)
+    self.ani.save("orbita.gif", writer=writer)
