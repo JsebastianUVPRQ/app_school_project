@@ -118,10 +118,10 @@ fig.add_trace(go.Scatter3d(
 ))
 
 # --- Configuración de la Animación ---
-frames = [go.Frame(data=[go.Scatter3d(x=[x_anim[k+1]], y=[y_anim[k+1]], z=[z_anim[k+1]])], # Solo actualiza la posición del planeta
+frames = [go.Frame(data=[go.Scatter3d(x=[x_anim[k]], y=[y_anim[k]], z=[z_anim[k]])], # Solo actualiza la posición del planeta
                    traces=[2], # El índice de la traza del planeta (0: estrella, 1: trayectoria, 2: planeta)
                    name=f'frame{k}')
-          for k in range(n_points_animation)]
+          for k in range(len(x_anim))]  # Usamos la longitud real del array en lugar de n_points_animation
 
 fig.frames = frames
 
