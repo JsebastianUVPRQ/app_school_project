@@ -87,9 +87,9 @@ fig.add_trace(go.Scatter3d(
     x=[0], y=[0], z=[0],
     mode='markers',
     marker=dict(
-        size=10,
-        color='yellow',
-        symbol='circle'
+        size=11,
+        color='royalblue',
+        #symbol='circle'
     ),
     name='Estrella'
 ))
@@ -110,9 +110,9 @@ fig.add_trace(go.Scatter3d(
     x=[x_anim[0]], y=[y_anim[0]], z=[z_anim[0]], # Posición inicial
     mode='markers',
     marker=dict(
-        size=6,
-        color='blue',
-        symbol='circle'
+        size=7,
+        color='saddlebrown',
+        # symbol='circle'
     ),
     name='Planeta'
 ))
