@@ -51,28 +51,47 @@ n_points_animation = 150 # Menos puntos para que la animación no sea eterna
 
 def calcular_coordenadas(e, p, n_points):
     """Calcula las coordenadas (x, y, z=0) de la órbita."""
-    if e < 1: # Elipse y Círculo
-        theta = np.linspace(0, 2 * np.pi, n_points)
-    elif e == 1: # Parábola
-        # Evitar theta = pi donde r tiende a infinito
-        max_angle = np.pi - 0.1 # Límite angular para evitar el infinito
-        theta = np.linspace(-max_angle, max_angle, n_points)
-    else: # Hipérbola
-        # El ángulo está limitado por las asíntotas: cos(theta) > -1/e
-        max_angle = np.arccos(-1 / e) - 0.05 # Un poco menos que la asíntota
-        theta = np.linspace(-max_angle, max_angle, n_points)
+    try:
+        if e < 1: # Elipse y Círculo
+            theta = np.linspace(0, 2 * np.pi, n_points)
+        elif e == 1: # Parábola
+            # Evitar theta = pi donde r tiende a infinito
+            max_angle = np.pi - 0.1 # Límite angular para evitar el infinito
+            theta = np.linspace(-max_angle, max_angle, n_points)
+        else: # Hipérbola
+            # El ángulo está limitado por las asíntotas: cos(theta) > -1/e
+            max_angle = np.arccos(-1 / e) - 0.05 # Un poco menos que la asíntota
+            theta = np.linspace(-max_angle, max_angle, n_points)
 
-    # Fórmula polar de las cónicas (foco en el origen)
-    r = p / (1 + e * np.cos(theta))
+        # Fórmula polar de las cónicas (foco en el origen)
+        r = p / (1 + e * np.cos(theta))
 
-    # Convertir a coordenadas cartesianas (en el plano z=0)
-    x = r * np.cos(theta)
-    y = r * np.sin(theta)
-    z = np.zeros_like(x) # Mantenemos la órbita en el plano XY
+        # Validar valores de r
+        r = np.nan_to_num(r, nan=0.0, posinf=max_distance, neginf=-max_distance)
 
-    # Filtrar puntos infinitos o muy lejanos (importante para parábola/hipérbola)
-    mask = np.isfinite(x) & np.isfinite(y) & (np.abs(r) < 50) # Limitar distancia visual
-    return x[mask], y[mask], z[mask], theta[mask]
+        # Convertir a coordenadas cartesianas (en el plano z=0)
+        x = r * np.cos(theta)
+        y = r * np.sin(theta)
+        z = np.zeros_like(x) # Mantenemos la órbita en el plano XY
+
+        # Validar coordenadas
+        x = np.nan_to_num(x, nan=0.0, posinf=max_distance, neginf=-max_distance)
+        y = np.nan_to_num(y, nan=0.0, posinf=max_distance, neginf=-max_distance)
+
+        # Filtrar puntos muy lejanos
+        max_distance = 20  # Límite máximo de visualización
+        mask = (np.abs(x) < max_distance) & (np.abs(y) < max_distance)
+        
+        # Si no hay puntos válidos, crear un punto en el origen
+        if not np.any(mask):
+            return np.array([0]), np.array([0]), np.array([0]), np.array([0])
+        
+        return x[mask], y[mask], z[mask], theta[mask]
+    
+    except Exception as e:
+        # En caso de cualquier error, retornar un punto en el origen
+        print(f"Error en cálculo de coordenadas: {str(e)}")
+        return np.array([0]), np.array([0]), np.array([0]), np.array([0])
 
 # Calcula las coordenadas para la trayectoria completa y la animación
 x_traj, y_traj, z_traj, theta_traj = calcular_coordenadas(e, p, n_points_trajectory)
@@ -158,20 +177,21 @@ updatemenus = [
 
 # --- Configuración del Layout del Gráfico 3D ---
 # Determinar límites adecuados para los ejes
-max_range = max(np.max(np.abs(x_traj)), np.max(np.abs(y_traj)), p) * 1.2
+max_distance = 20  # Límite máximo de visualización
+max_range = min(max(np.max(np.abs(x_traj)), np.max(np.abs(y_traj)), p) * 1.2, max_distance)
 min_range = -max_range
-
-# Manejo especial si la órbita es muy grande o infinita (parábola/hipérbola)
-if not np.isfinite(max_range):
-    max_range = 20 # Un valor por defecto razonable
-    min_range = -max_range
 
 fig.update_layout(
     scene=dict(
         xaxis=dict(range=[min_range, max_range], autorange=False, title='X (UA)', backgroundcolor="rgb(200, 200, 230)"),
         yaxis=dict(range=[min_range, max_range], autorange=False, title='Y (UA)', backgroundcolor="rgb(230, 200, 230)"),
-        zaxis=dict(range=[min_range/2, max_range/2], autorange=False, title='Z (UA)', backgroundcolor="rgb(230, 230, 200)"), # Z más pequeño
-        aspectmode='cube' # Mantiene la proporción cúbica, 'data' ajusta a los datos
+        zaxis=dict(range=[min_range/2, max_range/2], autorange=False, title='Z (UA)', backgroundcolor="rgb(230, 230, 200)"),
+        aspectmode='cube',
+        camera=dict(
+            up=dict(x=0, y=0, z=1),
+            center=dict(x=0, y=0, z=0),
+            eye=dict(x=1.5, y=1.5, z=1.5)
+        )
     ),
     title=f"Animación de Órbita {orbit_type}",
     updatemenus=updatemenus, # Añadir botones de animación
@@ -181,6 +201,12 @@ fig.update_layout(
         y=0.99,
         xanchor="left",
         x=0.01
+    ),
+    # Agregar controles de cámara
+    scene_camera=dict(
+        up=dict(x=0, y=0, z=1),
+        center=dict(x=0, y=0, z=0),
+        eye=dict(x=1.5, y=1.5, z=1.5)
     )
 )
 
