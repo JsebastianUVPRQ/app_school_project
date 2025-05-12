@@ -2,90 +2,121 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objs as go
 
-# Three-body problem simulation using RK4 integration
-def three_body(state, t=0, G=1.0, m1=1.0, m2=1.0, m3=1.0):
+# Función que calcula derivadas para el problema de los tres cuerpos
+def three_body_derivatives(state, G, m1, m2, m3):
+    # Desempaquetar estado: posiciones y velocidades
     x1, y1, z1, x2, y2, z2, x3, y3, z3, vx1, vy1, vz1, vx2, vy2, vz2, vx3, vy3, vz3 = state
-    # Positions
+
+    # Vectores de posición
     r1 = np.array([x1, y1, z1])
     r2 = np.array([x2, y2, z2])
     r3 = np.array([x3, y3, z3])
-    # Distances
+
+    # Calcular distancias
     d12 = np.linalg.norm(r2 - r1)
     d13 = np.linalg.norm(r3 - r1)
     d23 = np.linalg.norm(r3 - r2)
-    # Accelerations
+
+    # Evitar división por cero
+    eps = 1e-9
+    d12 = max(d12, eps)
+    d13 = max(d13, eps)
+    d23 = max(d23, eps)
+
+    # Aceleraciones gravitatorias
     a1 = G * m2 * (r2 - r1) / d12**3 + G * m3 * (r3 - r1) / d13**3
     a2 = G * m1 * (r1 - r2) / d12**3 + G * m3 * (r3 - r2) / d23**3
     a3 = G * m1 * (r1 - r3) / d13**3 + G * m2 * (r2 - r3) / d23**3
-    return np.concatenate((
-        [*r1, *r2, *r3, *[vx1, vy1, vz1], *[vx2, vy2, vz2], *[vx3, vy3, vz3]]
-    )) if False else np.concatenate((
-        [*vx1_to_list(vx1, vy1, vz1), *vx1_to_list(vx2, vy2, vz2), *vx1_to_list(vx3, vy3, vz3), *a1, *a2, *a3]
-    ))
 
-def rk4_step(f, y, dt):
-    k1 = f(y)
-    k2 = f(y + dt/2 * k1)
-    k3 = f(y + dt/2 * k2)
-    k4 = f(y + dt * k3)
-    return y + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
+    # Retornar vector de derivadas: velocidades seguidas de aceleraciones
+    derivatives = np.array([
+        vx1, vy1, vz1,
+        vx2, vy2, vz2,
+        vx3, vy3, vz3,
+        *a1, *a2, *a3
+    ])
+    return derivatives
 
-def simulate(initial_state, steps=1000, dt=0.01):
+# Integración con RK4
+def rk4_step(f, state, dt, *args):
+    k1 = f(state, *args)
+    k2 = f(state + dt/2 * k1, *args)
+    k3 = f(state + dt/2 * k2, *args)
+    k4 = f(state + dt * k3, *args)
+    return state + dt/6 * (k1 + 2*k2 + 2*k3 + k4)
+
+# Simulación de trayectorias
+def simulate(initial_state, steps, dt, G, m1, m2, m3):
     traj = np.zeros((steps, len(initial_state)))
     state = initial_state.copy()
     for i in range(steps):
         traj[i] = state
-        state = rk4_step(three_body, state, dt)
+        state = rk4_step(three_body_derivatives, state, dt, G, m1, m2, m3)
     return traj
 
-# Streamlit UI
+# --- Streamlit UI ---
+st.set_page_config(layout="wide")
 st.title("Problema de los Tres Cuerpos: Sensibilidad a Condiciones Iniciales")
 
-offset = st.slider("Desfase inicial (epsilon)", min_value=0.0, max_value=0.1, value=1e-5, step=1e-6, format="%e")
+# Panel lateral: parámetros
+st.sidebar.header("Parámetros de simulación")
+G = st.sidebar.number_input("Constante G", value=1.0, format="%.3f")
+m1 = st.sidebar.number_input("Masa cuerpo 1", value=1.0, format="%.3f")
+m2 = st.sidebar.number_input("Masa cuerpo 2", value=1.0, format="%.3f")
+m3 = st.sidebar.number_input("Masa cuerpo 3", value=1.0, format="%.3f")
+epsilon = st.sidebar.slider("Desfase inicial (epsilon)", 0.0, 0.1, 1e-5, 1e-6, format="%e")
+steps = st.sidebar.number_input("Número de pasos", min_value=100, max_value=5000, value=2000, step=100)
+dt = st.sidebar.number_input("Delta t", min_value=1e-4, max_value=0.1, value=0.01, format="%.4f")
 
-# Condiciones iniciales base
+# Definir condiciones iniciales clásicas (figura-8)
 i0 = np.array([
     -0.97000436, 0.24308753, 0.0,
      0.97000436, -0.24308753, 0.0,
      0.0,       0.0,        0.0,
-     0.4662036850, 0.4323657300, 0.0,
-     0.4662036850, 0.4323657300, 0.0,
-    -0.93240737, -0.86473146, 0.0
+    0.4662036850, 0.4323657300, 0.0,
+    0.4662036850, 0.4323657300, 0.0,
+   -0.93240737, -0.86473146, 0.0
 ])
-# Two initial states
-i1 = i0.copy()
-i2 = i0.copy()
-i2[0] += offset  # small change in x1
 
-# Simulation parameters
-steps = st.number_input("Número de pasos", min_value=100, max_value=5000, value=2000, step=100)
-dt = st.number_input("Delta t", min_value=1e-4, max_value=0.1, value=0.01, format="%.4f")
+# Generar dos estados iniciales
+state1 = i0.copy()
+state2 = i0.copy()
+state2[0] += epsilon
 
+# Simulación con spinner
 with st.spinner("Simulando trayectorias..."):
-    traj1 = simulate(i1, steps=steps, dt=dt)
-    traj2 = simulate(i2, steps=steps, dt=dt)
+    traj1 = simulate(state1, steps, dt, G, m1, m2, m3)
+    traj2 = simulate(state2, steps, dt, G, m1, m2, m3)
 
-# Plotting
-def plot_3d(traj, name):
+# Función para graficar 3D
+def plot_3d(traj, title):
     x1, y1, z1 = traj[:,0], traj[:,1], traj[:,2]
     x2, y2, z2 = traj[:,3], traj[:,4], traj[:,5]
     x3, y3, z3 = traj[:,6], traj[:,7], traj[:,8]
-    trace1 = go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', name=f'{name} - Cuerpo 1')
-    trace2 = go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', name=f'{name} - Cuerpo 2')
-    trace3 = go.Scatter3d(x=x3, y=y3, z=z3, mode='lines', name=f'{name} - Cuerpo 3')
-    fig = go.Figure(data=[trace1, trace2, trace3])
-    fig.update_layout(scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z'), width=600, height=600)
+    fig = go.Figure([
+        go.Scatter3d(x=x1, y=y1, z=z1, mode='lines', name='Cuerpo 1'),
+        go.Scatter3d(x=x2, y=y2, z=z2, mode='lines', name='Cuerpo 2'),
+        go.Scatter3d(x=x3, y=y3, z=z3, mode='lines', name='Cuerpo 3')
+    ])
+    fig.update_layout(
+        title=title,
+        scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z'),
+        margin=dict(l=0, r=0, b=0, t=30),
+        width=600, height=600
+    )
     return fig
 
-st.subheader("Trayectoria para condición inicial base")
-st.plotly_chart(plot_3d(traj1, 'Base'))
-
-st.subheader("Trayectoria con pequeño desfase inicial")
-st.plotly_chart(plot_3d(traj2, 'Desfase'))
+# Mostrar gráficos
+col1, col2 = st.columns(2)
+with col1:
+    st.subheader("Condición inicial base")
+    st.plotly_chart(plot_3d(traj1, 'Base'), use_container_width=True)
+with col2:
+    st.subheader("Con pequeño desfase inicial")
+    st.plotly_chart(plot_3d(traj2, 'Desfase'), use_container_width=True)
 
 st.markdown("---")
-st.write("Se observa cómo una pequeña variación en la condición inicial (epsilon) genera divergencias significativas entre las trayectorias, ilustrando el comportamiento caótico del sistema.")
-
-# Funciones auxiliares
-def vx1_to_list(vx, vy, vz):
-    return [vx, vy, vz]
+st.write(
+    "Observa cómo una mínima variación en la posición inicial conduce a divergencias significativas entre las trayectorias, "
+    "ilustrando el carácter caótico del sistema. Modifica epsilon y otros parámetros para explorar el efecto."
+)
