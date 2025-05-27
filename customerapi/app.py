@@ -1,7 +1,7 @@
 # orbital_simulation.py
 import streamlit as st
 import numpy as np
-import plotly.graph_objects as go
+import plotly.graph_objects as go # type: ignore
 import time  # Necesario para la animación paso a paso si no usamos frames de Plotly directamente
 
 # --- Configuración de la Página ---
