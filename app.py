@@ -130,7 +130,7 @@ with tab2:
             filtered_players['name'].str.contains(player_search, case=False)
         ]
         if not search_results.empty:
-            selected_player = st.selectbox(
+            selected_player: str = st.selectbox(
                 "Selecciona un jugador:", 
                 search_results['name']
             )
